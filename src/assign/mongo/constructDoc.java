@@ -1,19 +1,18 @@
 package assign.mongo;
 
-import com.mongodb.BasicDBObject;
+import org.bson.Document;
 
 public class constructDoc {  
-    public static BasicDBObject construct(String[] fields)  
+    public static Document construct(String[] fields)  
     {  
-//        int fieldsLen=fields.length;  
-        BasicDBObject result=null;  
+    	Document result=null;  
         
         String objectid = fields[0];
         int time = commonFunc.stringToInt(fields[1]);
         String longitude = fields[2];
         String latitude = fields[3];
                                            
-        result=new BasicDBObject("objectid",objectid)
+        result=new Document("personId",objectid)
                                 .append("time", time)  
                                 .append("longitude", longitude)  
                                 .append("latitude", latitude);  

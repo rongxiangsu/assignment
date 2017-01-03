@@ -4,22 +4,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import com.mongodb.DBCollection;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-
+import org.bson.Document;
+import com.mongodb.client.MongoCollection;
 
 public class readData implements Runnable {
 	private String folderPath;
-	private DB db;
 	private String encoding = "GBK";
-	private String collectionName;
+	private MongoCollection<Document> collection;
 	
-	public readData(String folderPath, DB db,String collectionName) {
+	public readData(String folderPath,MongoCollection<Document> collection) {
 		// TODO Auto-generated constructor stub
 		this.folderPath = folderPath;
-		this.db = db;
-		this.collectionName = collectionName;
+		this.collection = collection;
 	}
 
 	private static String[] getFilePaths(String folderPath) {
@@ -35,7 +31,6 @@ public class readData implements Runnable {
 		String[] filePaths = getFilePaths(folderPath);
 		BufferedReader bufferedReader = null;
 		try {
-			DBCollection collection = db.getCollection(collectionName);
 			for (int i = 0; i < filePaths.length; i++) {
 				System.out.println("开始读取" + folderPath + "第" + (i + 1) + "个文本。。。");
 				File file = new File(filePaths[i]);
@@ -43,13 +38,13 @@ public class readData implements Runnable {
 					InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
 					bufferedReader = new BufferedReader(reader, 1024 * 1024 * 80);
 					String lineTxt = "";
-					BasicDBObject doc = new BasicDBObject();
+					Document doc = new Document();
 					while ((lineTxt = bufferedReader.readLine()) != null) {
 						String[] fields = lineTxt.split("\t");
 						// List<Document>documents=new ArrayList<Document>();
 						doc = constructDoc.construct(fields);
 						if (doc != null) {
-							collection.insert(doc);
+							collection.insertOne(doc);
 						}
 					}
 					reader.close();

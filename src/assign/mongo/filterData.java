@@ -1,26 +1,38 @@
 package assign.mongo;
-import java.util.List;
-import com.mongodb.DB;
-import java.util.ArrayList; 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
+
+import java.util.Arrays;
+import com.mongodb.Block;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.AggregateIterable;
+import com.mongodb.client.model.Accumulators;
+import org.bson.Document;
 
 public class filterData{
+	private MongoCollection<Document>  collection;
 	
-	public void filterMissingTimeData(DB db,String COLLECTION_NAME){
-		BasicDBObject inQuery = new BasicDBObject();
-		List<Integer> list = new ArrayList<Integer>();
-		list.add(2);
-		list.add(4);
-		list.add(5);
-		inQuery.put("time", new BasicDBObject("$in", list));
-		DBCollection collection = db.getCollection(COLLECTION_NAME);
-		DBCursor cursor = collection.find(inQuery);
-		while(cursor.hasNext()) {
-			System.out.println(cursor.next());
-		}
-		return;
+	public filterData(MongoCollection<Document>  collection) {
+		// TODO Auto-generated constructor stub
+		this.collection = collection;
+	}
+
+
+	Block<Document> printBlock = new Block<Document>() {
+        @Override
+        public void apply(final Document document) {
+            System.out.println(document.toJson());
+        }
+    };
+	
+	public AggregateIterable<Document> filterNumberlowthan24(){
+		AggregateIterable<Document> countCollection = collection.aggregate(
+			      Arrays.asList(
+			              Aggregates.group("$personId", Accumulators.sum("count", 1))
+			      )
+			);
+		countCollection.toCollection();
+		System.out.println(countCollection);
+		return countCollection;
 	}
 	
 }

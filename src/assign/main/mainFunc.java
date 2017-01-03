@@ -1,34 +1,32 @@
 package assign.main;
 
-import com.mongodb.DB;
-import assign.mongo.connectMongo;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
 import assign.mongo.readData;
 import assign.mongo.filterData;
+import org.bson.Document;
 
 public class mainFunc {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String ip = "localhost";
+		String host = "localhost";
 		int port = 27017;
-		String dbName = "db2";
-		String collectionName = "movie";
-		connectMongo M = new connectMongo(ip, port, dbName);
-		DB db = M.connect();
+		String dbName = "db3";
+		String collectionName = "trajectory";
 
-		if (db != null) {
-			readData readThread1 = new readData("/home/wushi/workspace/mongoTest/data", db, collectionName);
+		MongoClient mongoClient = new MongoClient(host,port);
+		MongoDatabase database = mongoClient.getDatabase(dbName);
+		
+		if (database != null) {
+			MongoCollection<Document> collection = database.getCollection(collectionName);
+			collection.drop();
+			
+			readData readThread1 = new readData("/home/wushi/workspace/mongoTest/data", collection);
 			readThread1.run();
 			
-//			filterData Cd = 
-			
-			M.listLocationCollectionDocuments(dbName,collectionName);
-
-			// Thread thread1 = new Thread(readThread1);
-			// thread1.start();
-			// readData readThread2=new
-			// readData("/home/wushi/workspace/mongoTest/data",mydatabase);
-			// new Thread(readThread2).start();
+			filterData filterdata = new filterData(collection);
+//			filterdata.filterNumberlowthan24();
 
 		}
 	}
