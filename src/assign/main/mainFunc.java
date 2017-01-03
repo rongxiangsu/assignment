@@ -3,6 +3,7 @@ package assign.main;
 import com.mongodb.DB;
 import assign.mongo.connectMongo;
 import assign.mongo.readData;
+import assign.mongo.filterData;
 
 public class mainFunc {
 
@@ -19,7 +20,7 @@ public class mainFunc {
 			readData readThread1 = new readData("/home/wushi/workspace/mongoTest/data", db, collectionName);
 			readThread1.run();
 			
-			
+//			filterData Cd = 
 			
 			M.listLocationCollectionDocuments(dbName,collectionName);
 
